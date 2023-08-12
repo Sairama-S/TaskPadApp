@@ -4,11 +4,15 @@
     {
         static void Main(string[] args)
         {
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine("Welcome to TaskPad v1.0");
             bool exitFlag = false;
+            TodoManager taskSession = new TodoManager();
+
             while (!exitFlag)
             {
-                Console.WriteLine("Welcome to TaskPad v1.0");
-                Console.WriteLine("Enter the list number of the operation you want to perform from the below list. Entering any other number will result in the termination of the application:-");
+                Console.WriteLine("Enter the list number of the operation you want to perform from the below list:-");
                 Console.WriteLine("1. Add a task");
                 Console.WriteLine("2. View all tasks");
                 Console.WriteLine("3. View a specific task");
@@ -18,45 +22,86 @@
                 Console.WriteLine("7. Save tasks to a file");
                 Console.WriteLine("8. Load tasks from a file");
                 Console.WriteLine("9. Exit");
-                Console.Write("\nEnter number: ");
-                int option = Console.Read();
-                
-                TodoManager taskSession = new TodoManager();
+                int option = 10;
+                Console.Write("\nEnter choice: ");
+                try
+                {
+                    option = Convert.ToInt16(Console.ReadLine());
+                }
+                catch
+                {
+                    Console.WriteLine("Input expression is not a number. Try again");
+                    Console.WriteLine("\n********************************************************\n");
+
+                    continue;
+                }
+
+                if (option < 1 || option > 9)
+                {
+                    Console.WriteLine("Input must lie between 1 to 9. Try again");
+                    Console.WriteLine("\n********************************************************\n");
+                    continue;
+                }
                 switch (option)
                 {
                     case 1:
-                        taskSession.AddTask();
+                        taskSession.addTask();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 2:
-                        taskSession.GetTasksOverview();
+                        taskSession.getTasksOverview();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 3:
-                        taskSession.GetTaskDetails();
+                        taskSession.getTaskDetails();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 4:
-                        //taskSession.MarkAsCompleted(); TODO
+                        taskSession.setTaskStatus();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 5:
-                        taskSession.UpdateTask();
+                        taskSession.updateTask();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 6:
-                        //taskSession.DeleteTask(); TODO
+                        taskSession.deleteTask();
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     case 7:
-                        Console.WriteLine("Enter a unique file name to save the current set of tasks");
-                        string savefile = Console.ReadLine();
-                        FileManager.SaveTasks(taskSession, savefile);
-                        // For every save, generate a unique id number stored from a text file and give name as tasks<number>.json as a default
+                        FileManager.saveTasks(taskSession);
+                        Console.WriteLine("\n********************************************************\n");
                         break;
-                    case 8:
-                        Console.WriteLine("Enter the file name of the task list you want to load");
-                        string loadfile = Console.ReadLine();
-                        FileManager.LoadTasks(taskSession, loadfile);
+                    case 8:                        
+                        FileManager.loadTasks(taskSession);
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                     
                     default:
-                        Console.WriteLine("Exiting application.");
-                        exitFlag = true;
+                        if (taskSession.tasks == null || taskSession.tasks.Count == 0 || taskSession.isSaved == true)
+                        {
+                            Console.WriteLine("Exiting application.");
+                            exitFlag = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Do you want to save the tasks before exiting?");
+                            Console.WriteLine("Enter 1 to save the tasks and exit");
+                            Console.WriteLine("Enter 2 to exit without saving the tasks");
+                            int choice = TodoManager.getInput(1, 2);
+                            if (choice == 1)
+                            {
+                                FileManager.saveTasks(taskSession);
+                                exitFlag = true;
+                                Console.WriteLine("Exiting application.");
+                            }
+                            else if (choice == 2)
+                            {
+                                exitFlag = true;
+                                Console.WriteLine("Exiting application.");
+                            }
+                        }
+                        Console.WriteLine("\n********************************************************\n");
                         break;
                 }
             }
