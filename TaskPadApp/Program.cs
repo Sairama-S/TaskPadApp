@@ -1,14 +1,19 @@
-﻿namespace TaskPadApp
+﻿using System.Text;
+
+namespace TaskPadApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.Black;
+            //Console.BackgroundColor = ConsoleColor.White;
+            //Console.ForegroundColor = ConsoleColor.Black;
+            Console.OutputEncoding = Encoding.UTF8;
             Console.WriteLine("Welcome to TaskPad v1.0");
             bool exitFlag = false;
             TodoManager taskSession = new TodoManager();
+            Console.WriteLine("Loading tasks from the default file (test1.json)");
+            FileManager.loadTasks(taskSession, "test1");
 
             while (!exitFlag)
             {
@@ -26,11 +31,13 @@
                 Console.Write("\nEnter choice: ");
                 try
                 {
-                    option = Convert.ToInt16(Console.ReadLine());
+                    option = Convert.ToInt16(Console.ReadLine().Trim());
                 }
                 catch
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Input expression is not a number. Try again");
+                    Console.ForegroundColor= ConsoleColor.White;
                     Console.WriteLine("\n********************************************************\n");
 
                     continue;
@@ -38,7 +45,9 @@
 
                 if (option < 1 || option > 9)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Input must lie between 1 to 9. Try again");
+                    Console.ForegroundColor = ConsoleColor.White;                    
                     Console.WriteLine("\n********************************************************\n");
                     continue;
                 }
